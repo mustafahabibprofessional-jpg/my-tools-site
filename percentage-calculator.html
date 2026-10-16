@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Percentage Calculator - % of, % Change & More | YourSiteName</title>
+<meta name="description" content="Calculate what percent of a number is, what percent one number is of another, and percentage increase or decrease. Free, instant, no signup.">
+<link rel="stylesheet" href="/style.css">
+<style>
+.tool{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:20px}
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px}
+.box h2{font-size:17px;margin-bottom:8px}
+input{width:90px;padding:8px;border:1px solid #d1d5db;border-radius:6px;margin:4px 4px;font-size:15px}
+.line{margin-top:8px}
+.big{font-size:24px;font-weight:700;color:#2563eb;margin-top:10px}
+.faq{margin-top:30px}.faq h3{margin-top:14px}
+.related{margin-top:24px}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How do I calculate a percentage of a number?","acceptedAnswer":{"@type":"Answer","text":"Multiply the number by the percentage and divide by 100. For example, 20% of 150 is 150 x 20 / 100 = 30."}},
+{"@type":"Question","name":"How do I find what percent one number is of another?","acceptedAnswer":{"@type":"Answer","text":"Divide the first number by the second and multiply by 100. For example, 30 is 30 / 150 x 100 = 20% of 150."}},
+{"@type":"Question","name":"How do I calculate percentage increase or decrease?","acceptedAnswer":{"@type":"Answer","text":"Subtract the old value from the new value, divide by the old value and multiply by 100. For example, going from 80 to 100 is a 25% increase."}}]}
+</script>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="/">YourSiteName</a></div></header>
+<main class="wrap">
+<section class="hero">
+<h1>Free Percentage Calculator</h1>
+<p>Three quick calculators in one. Type your numbers and see the answer.</p>
+</section>
+<section class="tool">
+<div class="box">
+<h2>What is X% of Y?</h2>
+<div class="line">What is <input id="a1" type="number" value="20" oninput="calc()">% of <input id="b1" type="number" value="150" oninput="calc()"> ?</div>
+<div class="big" id="r1">0</div>
+</div>
+<div class="box">
+<h2>X is what % of Y?</h2>
+<div class="line"><input id="a2" type="number" value="30" oninput="calc()"> is what % of <input id="b2" type="number" value="150" oninput="calc()"> ?</div>
+<div class="big" id="r2">0</div>
+</div>
+<div class="box">
+<h2>Percentage increase / decrease</h2>
+<div class="line">From <input id="a3" type="number" value="80" oninput="calc()"> to <input id="b3" type="number" value="100" oninput="calc()"></div>
+<div class="big" id="r3">0</div>
+</div>
+</section>
+<section class="related">
+<p>Also try our <a href="/profit-margin-calculator">Profit Margin Calculator</a> and <a href="/tax-calculator">GST / VAT Calculator</a>.</p>
+</section>
+<section class="faq">
+<h2>Percentage Calculator FAQ</h2>
+<h3>How do I calculate a percentage of a number?</h3>
+<p>Multiply the number by the percentage and divide by 100. For example, 20% of 150 is 150 x 20 / 100 = 30.</p>
+<h3>How do I find what percent one number is of another?</h3>
+<p>Divide the first number by the second and multiply by 100. For example, 30 is 30 / 150 x 100 = 20% of 150.</p>
+<h3>How do I calculate percentage increase or decrease?</h3>
+<p>Subtract the old value from the new value, divide by the old value and multiply by 100. For example, going from 80 to 100 is a 25% increase.</p>
+</section>
+</main>
+<footer><div class="wrap"><a href="/about">About</a> | <a href="/contact">Contact</a> | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a><br>&copy; 2026 YourSiteName</div></footer>
+<script>
+function fmt(n){return n.toLocaleString(undefined,{maximumFractionDigits:4});}
+function v(id){return parseFloat(document.getElementById(id).value);}
+function calc(){
+var a1=v('a1'),b1=v('b1'),a2=v('a2'),b2=v('b2'),a3=v('a3'),b3=v('b3');
+document.getElementById('r1').textContent=(isNaN(a1)||isNaN(b1))?'-':fmt(a1/100*b1);
+document.getElementById('r2').textContent=(isNaN(a2)||isNaN(b2)||b2===0)?'-':fmt(a2/b2*100)+'%';
+var r3='-';
+if(!isNaN(a3)&&!isNaN(b3)&&a3!==0){
+var c=(b3-a3)/Math.abs(a3)*100;
+r3=(c>=0?'+':'')+fmt(c)+'%'+(c>0?' increase':(c<0?' decrease':''));
+}
+document.getElementById('r3').textContent=r3;
+}
+calc();
+</script>
+</body>
+</html>
