@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Word Counter & Character Counter Online | YourSiteName</title>
+<meta name="description" content="Count words, characters, sentences, paragraphs and reading time as you type. Free online word counter, no signup.">
+<link rel="stylesheet" href="/style.css">
+<style>
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-top:20px}
+textarea{width:100%;min-height:220px;padding:10px;border:1px solid #d1d5db;border-radius:6px;font-size:16px;font-family:inherit}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+.stat{background:#f3f4f6;border-radius:8px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px;color:#2563eb}
+button{background:#2563eb;color:#fff;border:0;padding:10px 16px;border-radius:6px;font-size:15px;cursor:pointer;margin-top:12px}
+.faq{margin-top:30px}.faq h3{margin-top:14px}
+.related{margin-top:24px}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How does this word counter count words?","acceptedAnswer":{"@type":"Answer","text":"It counts groups of characters separated by spaces or line breaks as words."}},
+{"@type":"Question","name":"How is reading time calculated?","acceptedAnswer":{"@type":"Answer","text":"Reading time assumes an average adult reads about 200 words per minute."}},
+{"@type":"Question","name":"Is my text saved or uploaded?","acceptedAnswer":{"@type":"Answer","text":"No. Counting happens in your browser and your text is never sent anywhere."}}]}
+</script>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="/">YourSiteName</a></div></header>
+<main class="wrap">
+<section class="hero">
+<h1>Free Word Counter</h1>
+<p>Type or paste your text below and the counts update instantly.</p>
+</section>
+<section class="box">
+<textarea id="t" placeholder="Start typing or paste your text here..." oninput="count()"></textarea>
+<div class="stats">
+<div class="stat"><b id="w">0</b>Words</div>
+<div class="stat"><b id="c">0</b>Characters</div>
+<div class="stat"><b id="cn">0</b>Without spaces</div>
+<div class="stat"><b id="s">0</b>Sentences</div>
+<div class="stat"><b id="p">0</b>Paragraphs</div>
+<div class="stat"><b id="r">0</b>Reading time</div>
+</div>
+<button onclick="document.getElementById('t').value='';count();">Clear text</button>
+</section>
+<section class="related">
+<p>Also try our <a href="/percentage-calculator">Percentage Calculator</a> and <a href="/image-compressor">Image Compressor</a>.</p>
+</section>
+<section class="faq">
+<h2>Word Counter FAQ</h2>
+<h3>How does this word counter count words?</h3>
+<p>It counts groups of characters separated by spaces or line breaks as words.</p>
+<h3>How is reading time calculated?</h3>
+<p>Reading time assumes an average adult reads about 200 words per minute.</p>
+<h3>Is my text saved or uploaded?</h3>
+<p>No. Counting happens in your browser and your text is never sent anywhere.</p>
+</section>
+</main>
+<footer><div class="wrap"><a href="/about">About</a> | <a href="/contact">Contact</a> | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a><br>&copy; 2026 YourSiteName</div></footer>
+<script>
+function count(){
+var t=document.getElementById('t').value;
+var words=t.trim()?t.trim().split(/\s+/).length:0;
+var sentences=t.trim()?(t.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[]).filter(function(x){return x.trim();}).length:0;
+var paras=t.trim()?t.split(/\n\s*\n/).filter(function(x){return x.trim();}).length:0;
+var mins=words/200;
+document.getElementById('w').textContent=words;
+document.getElementById('c').textContent=t.length;
+document.getElementById('cn').textContent=t.replace(/\s/g,'').length;
+document.getElementById('s').textContent=sentences;
+document.getElementById('p').textContent=paras;
+document.getElementById('r').textContent=words===0?'0 min':(mins<1?'< 1 min':Math.ceil(mins)+' min');
+}
+count();
+</script>
+</body>
+</html>
