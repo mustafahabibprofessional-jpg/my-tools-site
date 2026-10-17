@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free JPG to PDF Converter - Combine Images into One PDF | YourSiteName</title>
+<meta name="description" content="Convert JPG, PNG and WebP images to a single PDF in your browser. Reorder pages, choose page size and margins. Free, private, no signup.">
+<link rel="stylesheet" href="/style.css">
+<style>
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-top:20px}
+label{display:block;font-size:14px;margin-top:12px;font-weight:700}
+select{width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px;margin-top:4px;font-size:15px}
+input[type=file]{margin-top:6px}
+button{background:#2563eb;color:#fff;border:0;padding:10px 16px;border-radius:6px;font-size:15px;cursor:pointer;margin-top:12px}
+button.small{background:#e5e7eb;color:#111827;padding:4px 10px;margin:0 0 0 4px;font-size:13px}
+ul{list-style:none;margin-top:12px}
+li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #e5e7eb;font-size:14px}
+li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#msg{margin-top:10px;font-size:14px;color:#6b7280}
+.faq{margin-top:30px}.faq h3{margin-top:14px}
+.related{margin-top:24px}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How do I convert JPG to PDF?","acceptedAnswer":{"@type":"Answer","text":"Choose your images, put them in the order you want, pick a page size and click Create PDF. The PDF downloads to your device."}},
+{"@type":"Question","name":"Can I combine multiple images into one PDF?","acceptedAnswer":{"@type":"Answer","text":"Yes. Select several images and each one becomes a page in a single PDF. Use the arrows to change the page order."}},
+{"@type":"Question","name":"Are my images uploaded?","acceptedAnswer":{"@type":"Answer","text":"No. The conversion happens in your browser and your images never leave your device."}}]}
+</script>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="/">YourSiteName</a></div></header>
+<main class="wrap">
+<section class="hero">
+<h1>Free JPG to PDF Converter</h1>
+<p>Combine one or more images into a single PDF. Nothing is uploaded.</p>
+</section>
+<section class="box">
+<label>Choose images (JPG, PNG or WebP)<input id="f" type="file" accept="image/*" multiple></label>
+<ul id="list"></ul>
+<label>Page size
+<select id="size"><option value="a4">A4</option><option value="letter">US Letter</option></select></label>
+<label>Margin
+<select id="margin"><option value="0">None</option><option value="10" selected>Small</option><option value="20">Large</option></select></label>
+<button onclick="make()">Create PDF</button>
+<p id="msg"></p>
+</section>
+<section class="related">
+<p>Also try our <a href="/image-compressor">Image Compressor</a> and <a href="/invoice-generator">Free Invoice Generator</a>.</p>
+</section>
+<section class="faq">
+<h2>JPG to PDF FAQ</h2>
+<h3>How do I convert JPG to PDF?</h3>
+<p>Choose your images, put them in the order you want, pick a page size and click Create PDF. The PDF downloads to your device.</p>
+<h3>Can I combine multiple images into one PDF?</h3>
+<p>Yes. Select several images and each one becomes a page in a single PDF. Use the arrows to change the page order.</p>
+<h3>Are my images uploaded?</h3>
+<p>No. The conversion happens in your browser and your images never leave your device.</p>
+</section>
+</main>
+<footer><div class="wrap"><a href="/about">About</a> | <a href="/contact">Contact</a> | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a><br>&copy; 2026 YourSiteName</div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+var files=[];
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function msg(t){document.getElementById('msg').textContent=t;}
+document.getElementById('f').addEventListener('change',function(e){
+for(var i=0;i<e.target.files.length;i++){files.push(e.target.files[i]);}
+e.target.value='';render();
+});
+function render(){
+var h='';
+files.forEach(function(f,i){
+h+='<li><span>'+(i+1)+'. '+esc(f.name)+'</span><span><button class="small" onclick="mv('+i+',-1)">&uarr;</button><button class="small" onclick="mv('+i+',1)">&darr;</button><button class="small" onclick="rm('+i+')">&times;</button></span></li>';
+});
+document.getElementById('list').innerHTML=h;
+}
+function mv(i,d){var j=i+d;if(j<0||j>=files.length)return;var t=files[i];files[i]=files[j];files[j]=t;render();}
+function rm(i){files.splice(i,1);render();}
+function load(file){
+return new Promise(function(res,rej){
+var u=URL.createObjectURL(file),im=new Image();
+im.onload=function(){URL.revokeObjectURL(u);res(im);};
+im.onerror=function(){URL.revokeObjectURL(u);rej(new Error('Could not read '+file.name));};
+im.src=u;
+});
+}
+async function make(){
+if(!files.length){msg('Please choose at least one image.');return;}
+if(!window.jspdf){msg('The PDF library did not load. Check your internet connection and refresh the page.');return;}
+var jsPDF=window.jspdf.jsPDF;
+var size=document.getElementById('size').value;
+var mm=parseFloat(document.getElementById('margin').value);
+var pdf=null;
+try{
+for(var k=0;k<files.length;k++){
+msg('Processing image '+(k+1)+' of '+files.length+'...');
+var img=await load(files[k]);
+var w=img.naturalWidth,h=img.naturalHeight;
+var scale=Math.min(1,2200/Math.max(w,h));
+var cw=Math.round(w*scale),ch=Math.round(h*scale);
+var c=document.createElement('canvas');c.width=cw;c.height=ch;
+var ctx=c.getContext('2d');
+ctx.fillStyle='#fff';ctx.fillRect(0,0,cw,ch);
+ctx.drawImage(img,0,0,cw,ch);
+var data=c.toDataURL('image/jpeg',0.92);
+var orient=w>h?'l':'p';
+if(!pdf){pdf=new jsPDF({orientation:orient,unit:'mm',format:size});}
+else{pdf.addPage(size,orient);}
+var pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight();
+var s=Math.min((pw-2*mm)/cw,(ph-2*mm)/ch);
+var iw=cw*s,ih=ch*s;
+pdf.addImage(data,'JPEG',(pw-iw)/2,(ph-ih)/2,iw,ih);
+}
+pdf.save('images.pdf');
+msg('Done. Your PDF has been downloaded.');
+}catch(e){msg('Something went wrong: '+e.message);}
+}
+</script>
+</body>
+</html>
