@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Merge PDF - Combine PDF Files Online | YourSiteName</title>
+<meta name="description" content="Merge multiple PDF files into one in your browser. Reorder files and download instantly. Free, private, no signup, nothing uploaded.">
+<link rel="stylesheet" href="/style.css">
+<style>
+.box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;margin-top:20px}
+label{display:block;font-size:14px;margin-top:12px;font-weight:700}
+input[type=file]{margin-top:6px}
+button{background:#2563eb;color:#fff;border:0;padding:10px 16px;border-radius:6px;font-size:15px;cursor:pointer;margin-top:12px}
+button.small{background:#e5e7eb;color:#111827;padding:4px 10px;margin:0 0 0 4px;font-size:13px}
+ul{list-style:none;margin-top:12px}
+li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #e5e7eb;font-size:14px}
+li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#msg{margin-top:10px;font-size:14px;color:#6b7280}
+.faq{margin-top:30px}.faq h3{margin-top:14px}
+.related{margin-top:24px}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How do I merge PDF files?","acceptedAnswer":{"@type":"Answer","text":"Choose two or more PDF files, put them in the order you want using the arrows and click Merge PDF. The combined file downloads to your device."}},
+{"@type":"Question","name":"Are my PDF files uploaded?","acceptedAnswer":{"@type":"Answer","text":"No. The merge happens in your browser and your files never leave your device."}},
+{"@type":"Question","name":"Why can't I merge a password-protected PDF?","acceptedAnswer":{"@type":"Answer","text":"Protected PDFs cannot be read by the merge tool. Remove the password in your PDF viewer first, then try again."}}]}
+</script>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="/">YourSiteName</a></div></header>
+<main class="wrap">
+<section class="hero">
+<h1>Free Merge PDF</h1>
+<p>Combine multiple PDF files into one. Nothing is uploaded.</p>
+</section>
+<section class="box">
+<label>Choose PDF files<input id="f" type="file" accept="application/pdf" multiple></label>
+<ul id="list"></ul>
+<button onclick="merge()">Merge PDF</button>
+<p id="msg"></p>
+</section>
+<section class="related">
+<p>Also try our <a href="/jpg-to-pdf">JPG to PDF Converter</a> and <a href="/image-compressor">Image Compressor</a>.</p>
+</section>
+<section class="faq">
+<h2>Merge PDF FAQ</h2>
+<h3>How do I merge PDF files?</h3>
+<p>Choose two or more PDF files, put them in the order you want using the arrows and click Merge PDF. The combined file downloads to your device.</p>
+<h3>Are my PDF files uploaded?</h3>
+<p>No. The merge happens in your browser and your files never leave your device.</p>
+<h3>Why can't I merge a password-protected PDF?</h3>
+<p>Protected PDFs cannot be read by the merge tool. Remove the password in your PDF viewer first, then try again.</p>
+</section>
+</main>
+<footer><div class="wrap"><a href="/about">About</a> | <a href="/contact">Contact</a> | <a href="/privacy">Privacy</a> | <a href="/terms">Terms</a><br>&copy; 2026 YourSiteName</div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+var files=[];
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function msg(t){document.getElementById('msg').textContent=t;}
+document.getElementById('f').addEventListener('change',function(e){
+for(var i=0;i<e.target.files.length;i++){files.push(e.target.files[i]);}
+e.target.value='';render();
+});
+function render(){
+var h='';
+files.forEach(function(f,i){
+h+='<li><span>'+(i+1)+'. '+esc(f.name)+'</span><span><button class="small" onclick="mv('+i+',-1)">&uarr;</button><button class="small" onclick="mv('+i+',1)">&darr;</button><button class="small" onclick="rm('+i+')">&times;</button></span></li>';
+});
+document.getElementById('list').innerHTML=h;
+}
+function mv(i,d){var j=i+d;if(j<0||j>=files.length)return;var t=files[i];files[i]=files[j];files[j]=t;render();}
+function rm(i){files.splice(i,1);render();}
+async function merge(){
+if(files.length<2){msg('Please choose at least two PDF files.');return;}
+if(!window.PDFLib){msg('The PDF library did not load. Check your internet connection and refresh the page.');return;}
+var current='';
+try{
+var out=await PDFLib.PDFDocument.create();
+for(var k=0;k<files.length;k++){
+current=files[k].name;
+msg('Merging file '+(k+1)+' of '+files.length+'...');
+var bytes=await files[k].arrayBuffer();
+var src=await PDFLib.PDFDocument.load(bytes);
+var pages=await out.copyPages(src,src.getPageIndices());
+pages.forEach(function(p){out.addPage(p);});
+}
+var data=await out.save();
+var blob=new Blob([data],{type:'application/pdf'});
+var url=URL.createObjectURL(blob);
+var a=document.createElement('a');
+a.href=url;a.download='merged.pdf';
+document.body.appendChild(a);a.click();a.remove();
+setTimeout(function(){URL.revokeObjectURL(url);},4000);
+msg('Done. Your merged PDF has been downloaded.');
+}catch(e){
+msg('Could not merge "'+current+'". It may be password-protected or damaged.');
+}
+}
+</script>
+</body>
+</html>
